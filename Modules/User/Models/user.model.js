@@ -1,34 +1,33 @@
 import { DataTypes } from "sequelize";
-
 export default (sequelize) => {
-  const url = sequelize.define(
-    "Url",
+  const user = sequelize.define(
+    "User",
     {
       id: {
         type: DataTypes.NUMBER,
-        autoIncrement: true,
         primaryKey: true,
+        autoIncrement: true,
       },
-      title: {
-        type: DataTypes.STRING(100),
-        allowNull: false,
+      name: {
+        type: DataTypes.STRING(150),
+        allowNull: true,
       },
-      url: {
-        type: DataTypes.STRING(600),
-        allowNull: false,
-      },
-      short_code: {
-        type: DataTypes.STRING(11),
+      email: {
+        type: DataTypes.STRING(150),
         allowNull: false,
         unique: true,
+      },
+      password: {
+        type: DataTypes.STRING,
+        allowNull: false,
       },
       is_active: {
         type: DataTypes.BOOLEAN,
         default: true,
       },
-      user_id: {
-        type: DataTypes.NUMBER,
-        allowNull: false,
+      googleId: {
+        type: DataTypes.STRING,
+        allowNull: true,
       },
       created_at: {
         type: DataTypes.DATE,
@@ -43,13 +42,9 @@ export default (sequelize) => {
       timestamps: true,
       createdAt: "created_at",
       updatedAt: "updated_at",
-      tableName: "short_urls",
+      tableName: "users",
     }
   );
 
-  url.associate = (user) => {
-    //user_id belongs to user->id
-  };
-
-  return url;
+  return user;
 };
