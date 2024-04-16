@@ -1,11 +1,11 @@
 import { DataTypes } from "sequelize";
 
 export default (sequelize) => {
-  const url = sequelize.define(
+  const Url = sequelize.define(
     "Url",
     {
       id: {
-        type: DataTypes.NUMBER,
+        type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
       },
@@ -24,10 +24,10 @@ export default (sequelize) => {
       },
       is_active: {
         type: DataTypes.BOOLEAN,
-        default: true,
+        defaultValue: true, // Changed from 'default' to 'defaultValue'
       },
       user_id: {
-        type: DataTypes.NUMBER,
+        type: DataTypes.INTEGER,
         allowNull: false,
       },
       created_at: {
@@ -47,9 +47,13 @@ export default (sequelize) => {
     }
   );
 
-  url.associate = (user) => {
-    //user_id belongs to user->id
+  Url.associate = (models) => {
+    // Define associations here
+    Url.belongsTo(models.User, {
+      foreignKey: "user_id",
+      targetKey: "id",
+    });
   };
 
-  return url;
+  return Url;
 };
