@@ -1,6 +1,7 @@
 import { Sequelize } from "sequelize";
 import config from "../Config/config.js";
 import { Logger } from "../Utils/Logger/winston.logger.js";
+import { initiateModels } from "./models.loader.js";
 
 let instance = null;
 class DatabaseSingleton {
@@ -8,7 +9,7 @@ class DatabaseSingleton {
     throw new Error("Use static method getInstance instead of constructor");
   }
 
-  static getInstance() {
+  static async getInstance() {
     try {
       if (!instance) {
         instance = new Sequelize(
@@ -16,6 +17,7 @@ class DatabaseSingleton {
           config.Mysql.username,
           config.Mysql.password,
           {
+            database: config.Mysql.database,
             host: config.Mysql.host,
             port: config.Mysql.port,
             dialect: "mysql",
@@ -24,14 +26,15 @@ class DatabaseSingleton {
         );
 
         // Test the database connection
-        instance
-          .authenticate()
-          .then(() => {
-            Logger.info("Database connection established successfully.");
-          })
-          .catch((err) => {
-            throw new Error(err);
-          });
+        await instance.authenticate();
+
+        //regiister models
+        initiateModels(instance);
+
+        //sync the database
+        await instance.sync({ force: false });
+
+        Logger.info("Database connection established successfully.");
       }
 
       return instance;

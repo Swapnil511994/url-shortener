@@ -1,4 +1,3 @@
 //entry point
-import express from "express";
-
-const app = express();
+import {db} from "./Database/db.singleton.js";
+console.log(db.models);

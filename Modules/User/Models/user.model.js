@@ -4,7 +4,7 @@ export default (sequelize) => {
     "User",
     {
       id: {
-        type: DataTypes.NUMBER,
+        type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
       },
