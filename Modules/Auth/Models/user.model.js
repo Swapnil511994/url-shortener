@@ -23,7 +23,7 @@ export default (sequelize) => {
       },
       is_active: {
         type: DataTypes.BOOLEAN,
-        default: true,
+        defaultValue: true,
       },
       googleId: {
         type: DataTypes.STRING,
