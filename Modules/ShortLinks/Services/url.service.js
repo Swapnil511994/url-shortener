@@ -19,15 +19,31 @@ class UrlService {
     }
   };
 
-  getUrlsByUserId = async (userId) => {
+  getUrlsByUserId = async (userId, page = 1, pageSize = 10) => {
     try {
-      const urls = await this.Url.findAll({
+      const offset = (page - 1) * pageSize;
+      const limit = pageSize;
+
+      const urls = await this.Url.findAndCountAll({
         where: {
           user_id: userId,
         },
+        offset: offset,
+        limit: limit,
       });
 
-      if (urls.length >= 0) return urls;
+      if (urls.rows.length >= 0) {
+        const totalPages = Math.ceil(urls.count / limit);
+        return {
+          data: urls.rows,
+          pagination: {
+            page: page,
+            pageSize: limit,
+            rowCount: urls.count,
+            totalPages: totalPages,
+          },
+        };
+      }
       return null;
     } catch (error) {
       Logger.error(`Error in getUrlsByUserId: 
@@ -36,8 +52,27 @@ class UrlService {
     }
   };
 
+  getUrlByShortCode = async (shortCode) => {
+    try {
+      const url = await this.Url.findOne({
+        where: {
+          short_code: shortCode,
+        },
+        attributes: ["id", "url"],
+      });
+
+      if (url?.id > 0) return url;
+      else throw new Error("Invalid Object Retreived");
+    } catch (error) {
+      Logger.error(`Error in getUrlByShortCode: 
+      ${error?.message ? error.message : "Unknown Error"}`);
+      return null;
+    }
+  };
+
   updateUrl = async (id, urlBody) => {
     try {
+      delete urlBody.id;
       const updatedUrl = await this.Url.update(urlBody, {
         where: {
           id: id,
@@ -52,7 +87,16 @@ class UrlService {
     }
   };
 
-  addUrl = async (urlBody) => {};
+  addUrl = async (urlBody) => {
+    try {
+      const addUrlStatus = await this.Url.create(urlBody);
+      return addUrlStatus;
+    } catch (error) {
+      Logger.error(`Error in addUrl: 
+      ${error?.message ? error.message : "Unknown Error"}`);
+      return false;
+    }
+  };
 }
 
 export default UrlService;

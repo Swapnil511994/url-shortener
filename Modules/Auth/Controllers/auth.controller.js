@@ -81,6 +81,8 @@ class AuthController {
       res.json({ status: false, message: "User Updation Failed" });
     }
   };
+
+  loginRegisterViaGoogle = async (req, res) => {};
 }
 
 export default AuthController;

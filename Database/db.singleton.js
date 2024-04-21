@@ -21,7 +21,7 @@ class DatabaseSingleton {
             host: config.Mysql.host,
             port: config.Mysql.port,
             dialect: "mysql",
-            logging: (msg) => console.log(`[MySQL] ${msg}`), // Custom logging function
+            logging: true,
           }
         );
 

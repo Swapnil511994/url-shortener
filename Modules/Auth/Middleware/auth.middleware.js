@@ -20,7 +20,6 @@ export const authenticateToken = (req, res, next) => {
           status: false,
           message: "Unable to decode token",
         });
-      console.log("decoded", decoded);
       req.user = decoded;
       next();
     }

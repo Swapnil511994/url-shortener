@@ -24,7 +24,7 @@ export default (sequelize) => {
       },
       is_active: {
         type: DataTypes.BOOLEAN,
-        defaultValue: true, // Changed from 'default' to 'defaultValue'
+        defaultValue: true,
       },
       user_id: {
         type: DataTypes.UUID,
