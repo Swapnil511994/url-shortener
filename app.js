@@ -47,5 +47,5 @@ function printRoutes() {
 
 app.listen(config.Application.port, () => {
   Logger.info(`Server started at port: ${config.Application.port}`);
-  printRoutes();
+  //   printRoutes();
 });

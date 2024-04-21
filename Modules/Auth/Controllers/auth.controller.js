@@ -12,10 +12,15 @@ class AuthController {
     try {
       const { email, password } = req.body;
       const existingUser = await this.userService.getUserByEmail(email);
-      if (!existingUser || existingUser?.id <= 0)
+      if (!existingUser || existingUser?.id?.length <= 0)
         throw new Error("User Not Found");
 
-      if (!bcrypt.compare(password, existingUser.password)) {
+      const passwordsMatch = await bcrypt.compare(
+        password,
+        existingUser.password
+      );
+
+      if (!passwordsMatch) {
         throw new Error("Invalid Credentials");
       }
 
@@ -36,16 +41,46 @@ class AuthController {
       res.json({ status: false, message: "Invalid Login Attempt" });
     }
   };
+
   register = async (req, res) => {
     try {
       const body = req.body;
       const newUser = await this.userService.addUser(body);
-      if (newUser?.id > 0)
+      if (newUser?.id?.length > 0)
         return res.json({ status: true, message: "Registration Successfull" });
       else return res.json({ status: false, message: "Registration Failed" });
-    } catch (error) {}
+    } catch (error) {
+      Logger.error(
+        `Error in register: ${error?.message ? error.message : "Unknown Error"}`
+      );
+      res.json({ status: false, message: "Invalid Login Attempt" });
+    }
   };
-  updateUser = async (req, res) => {};
+
+  updateUser = async (req, res) => {
+    try {
+      const body = req.body;
+
+      const existingUser = await this.userService.getUserByEmail(body.email);
+      if (!existingUser || existingUser?.id?.length <= 0)
+        throw new Error("User Not Found");
+
+      const updateStatus = await this.userService.updateUser(
+        existingUser.id,
+        body
+      );
+      if (updateStatus)
+        return res.json({ status: true, message: "Update Successfull" });
+      else return res.json({ status: false, message: "Update Failed" });
+    } catch (error) {
+      Logger.error(
+        `Error in updateUser: ${
+          error?.message ? error.message : "Unknown Error"
+        }`
+      );
+      res.json({ status: false, message: "User Updation Failed" });
+    }
+  };
 }
 
 export default AuthController;

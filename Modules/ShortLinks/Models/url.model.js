@@ -27,7 +27,7 @@ export default (sequelize) => {
         defaultValue: true, // Changed from 'default' to 'defaultValue'
       },
       user_id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
         allowNull: false,
       },
       created_at: {

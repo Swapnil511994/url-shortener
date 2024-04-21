@@ -12,7 +12,7 @@ class UserService {
     try {
       if (userId <= 0) throw new Error("Invalid userId");
       const userObj = await this.User.findByPk(userId);
-      if (userObj?.id > 0) return userObj;
+      if (userObj?.id?.length > 0) return userObj;
       else throw new Error("Invalid Object retreived");
     } catch (error) {
       Logger.error(
@@ -32,7 +32,7 @@ class UserService {
           email: emailId,
         },
       });
-      if (userObj?.id > 0) return userObj;
+      if (userObj?.id?.length > 0) return userObj;
       else throw new Error("Invalid Object Returned");
     } catch (error) {
       Logger.error(
@@ -70,6 +70,7 @@ class UserService {
           error?.message ? error.message : "Unknown Error"
         }`
       );
+      return false;
     }
   };
 

@@ -12,8 +12,6 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const privateKEYPath = path.join(__dirname, "Keys", "private.key");
 const privateKEY = fs.readFileSync(privateKEYPath, "utf8");
 
-console.log("privateKEY", privateKEY);
-
 const publicKEYPath = path.join(__dirname, "Keys", "public.key");
 const publicKEY = fs.readFileSync(publicKEYPath, "utf8");
 
