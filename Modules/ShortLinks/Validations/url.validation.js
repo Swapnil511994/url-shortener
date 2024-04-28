@@ -10,6 +10,7 @@ const updateUrlSchema = Joi.object({
   url: Joi.string().optional().max(600),
   short_code: Joi.string().optional().max(11),
   is_active: Joi.boolean().optional(),
+  id: Joi.number().required().min(0),
 });
 
 export const createUrlValidation = (req, res, next) => {
