@@ -10,10 +10,8 @@ class UrlController {
       const body = req.body;
       body.user_id = req.user.id;
 
-      console.log("Requeest Body", JSON.stringify(body));
-
       const addUrlStatus = await this.urlService.addUrl(body);
-      if (addUrlStatus?.id > 0)
+      if (addUrlStatus?.id?.length > 0)
         res.json({ status: true, message: "URL Added", data: addUrlStatus });
       else throw new Error("Unable To Add URL");
     } catch (error) {
@@ -27,8 +25,9 @@ class UrlController {
   updateUrl = async (req, res) => {
     try {
       const body = req.body;
-      const updateUrlStatus = await this.urlService.updateUrl(body.id, body);
-      if (updateUrlStatus) res.json({ status: true, message: "URL Updated" });
+      const updatedUrl = await this.urlService.updateUrl(body.id, body);
+      if (updatedUrl?.id?.length > 0)
+        res.json({ status: true, message: "URL Updated", data: updatedUrl });
       else throw new Error("Unable To Update URL");
     } catch (error) {
       Logger.error(
@@ -71,7 +70,7 @@ class UrlController {
     try {
       const { short_code } = req.params;
       const url = await this.urlService.getUrlByShortCode(short_code);
-      if (url?.id > 0) {
+      if (url?.id?.length > 0) {
         //redirect to this url
         res.redirect(url.url);
       } else throw new Error("Invalid Object Retreived");

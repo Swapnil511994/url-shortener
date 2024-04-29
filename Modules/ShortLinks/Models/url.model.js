@@ -1,59 +1,40 @@
-import { DataTypes } from "sequelize";
-
-export default (sequelize) => {
-  const Url = sequelize.define(
-    "Url",
+export default (mongoose) => {
+  const urlSchema = new mongoose.Schema(
     {
-      id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        primaryKey: true,
-      },
       title: {
-        type: DataTypes.STRING(100),
-        allowNull: false,
+        type: String,
+        required: true,
+        maxlength: 100,
       },
       url: {
-        type: DataTypes.STRING(600),
-        allowNull: false,
+        type: String,
+        required: true,
+        maxlength: 600,
       },
       short_code: {
-        type: DataTypes.STRING(11),
-        allowNull: false,
+        type: String,
+        required: true,
         unique: true,
+        maxlength: 11,
       },
       is_active: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: true,
+        type: Boolean,
+        default: true,
       },
       user_id: {
-        type: DataTypes.UUID,
-        allowNull: false,
-      },
-      created_at: {
-        type: DataTypes.DATE,
-        allowNull: true,
-      },
-      updated_at: {
-        type: DataTypes.DATE,
-        allowNull: true,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
       },
     },
     {
-      timestamps: true,
-      createdAt: "created_at",
-      updatedAt: "updated_at",
-      tableName: "short_urls",
+      timestamps: {
+        createdAt: "created_at", // Customize names to match Sequelize model
+        updatedAt: "updated_at",
+      },
+      collection: "short_urls",
     }
   );
 
-  Url.associate = (models) => {
-    // Define associations here
-    Url.belongsTo(models.User, {
-      foreignKey: "user_id",
-      targetKey: "id",
-    });
-  };
-
-  return Url;
+  const Url = mongoose.models.Url || mongoose.model("Url", urlSchema);
 };

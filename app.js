@@ -4,6 +4,7 @@ import bodyParser from "body-parser";
 import helmet from "helmet";
 import config from "./Config/config.js";
 import { Logger } from "./Utils/Logger/winston.logger.js";
+import { db } from "./Database/db.singleton.js";
 
 const app = express();
 
@@ -17,33 +18,35 @@ app.use(bodyParser.text());
 //routes
 registerRoutes(app);
 
-// Function to print all routes
-function printRoutes() {
-  const routes = [];
+console.log(db.models);
 
-  app._router.stack.forEach((middleware) => {
-    if (middleware.route) {
-      // routes registered directly on the app
-      const { path, methods } = middleware.route;
-      const methodNames = Object.keys(methods).join(", ").toUpperCase();
-      routes.push(`${methodNames} ${path}`);
-    } else if (middleware.name === "router") {
-      // router middleware
-      middleware.handle.stack.forEach((handler) => {
-        const { route } = handler;
-        if (route) {
-          const methodNames = route.stack
-            .map((layer) => layer.method.toUpperCase())
-            .join(", ");
-          routes.push(`${methodNames} ${route.path}`);
-        }
-      });
-    }
-  });
+// // Function to print all routes
+// function printRoutes() {
+//   const routes = [];
 
-  console.log("All registered routes:");
-  routes.forEach((route) => console.log(route));
-}
+//   app._router.stack.forEach((middleware) => {
+//     if (middleware.route) {
+//       // routes registered directly on the app
+//       const { path, methods } = middleware.route;
+//       const methodNames = Object.keys(methods).join(", ").toUpperCase();
+//       routes.push(`${methodNames} ${path}`);
+//     } else if (middleware.name === "router") {
+//       // router middleware
+//       middleware.handle.stack.forEach((handler) => {
+//         const { route } = handler;
+//         if (route) {
+//           const methodNames = route.stack
+//             .map((layer) => layer.method.toUpperCase())
+//             .join(", ");
+//           routes.push(`${methodNames} ${route.path}`);
+//         }
+//       });
+//     }
+//   });
+
+//   console.log("All registered routes:");
+//   routes.forEach((route) => console.log(route));
+// }
 
 app.listen(config.Application.port, () => {
   Logger.info(`Server started at port: ${config.Application.port}`);

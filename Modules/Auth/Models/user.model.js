@@ -1,51 +1,38 @@
-import { DataTypes } from "sequelize";
-import { v4 as uuidv4 } from "uuid";
-export default (sequelize) => {
-  const User = sequelize.define(
-    "User",
+export default (mongoose) => {
+  const userSchema = new mongoose.Schema(
     {
-      id: {
-        type: DataTypes.UUID,
-        primaryKey: true,
-        defaultValue: () => uuidv4(),
-      },
       name: {
-        type: DataTypes.STRING(150),
-        allowNull: true,
+        type: String,
+        maxlength: 150,
+        default: null, // Explicitly set default as null if allowed
       },
       email: {
-        type: DataTypes.STRING(150),
-        allowNull: false,
-        unique: true,
+        type: String,
+        maxlength: 150,
+        required: true,
+        unique: true, // Ensure email uniqueness across documents
       },
       password: {
-        type: DataTypes.STRING,
-        allowNull: false,
+        type: String,
+        required: true,
       },
       is_active: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: true,
+        type: Boolean,
+        default: true,
       },
       googleId: {
-        type: DataTypes.STRING,
-        allowNull: true,
-      },
-      created_at: {
-        type: DataTypes.DATE,
-        allowNull: true,
-      },
-      updated_at: {
-        type: DataTypes.DATE,
-        allowNull: true,
+        type: String,
+        default: null, // Explicitly set default as null if allowed
       },
     },
     {
-      timestamps: true,
-      createdAt: "created_at",
-      updatedAt: "updated_at",
-      tableName: "users",
+      timestamps: {
+        createdAt: "created_at", // Customize field names for timestamps
+        updatedAt: "updated_at",
+      },
+      collection: "users", // Define the collection name
     }
   );
 
-  return User;
+  const User = mongoose.models.User || mongoose.model("User", userSchema);
 };

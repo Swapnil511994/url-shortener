@@ -9,7 +9,7 @@ class UrlService {
 
   getUrlById = async (id) => {
     try {
-      const url = await this.Url.findByPk(id);
+      const url = await this.Url.findById(id);
       if (url?.id >= 0) return url;
       else return null;
     } catch (error) {
@@ -24,22 +24,23 @@ class UrlService {
       const offset = (page - 1) * pageSize;
       const limit = pageSize;
 
-      const urls = await this.Url.findAndCountAll({
-        where: {
-          user_id: userId,
-        },
-        offset: offset,
-        limit: limit,
-      });
+      const urls = await this.Url.find({
+        user_id: userId,
+      })
+        .skip(offset)
+        .limit(limit)
+        .exec();
 
-      if (urls.rows.length >= 0) {
-        const totalPages = Math.ceil(urls.count / limit);
+      const count = await this.Url.countDocuments({ user_id: userId });
+
+      if (urls.length >= 0) {
+        const totalPages = Math.ceil(count / limit);
         return {
-          data: urls.rows,
+          data: urls,
           pagination: {
             page: page,
             pageSize: limit,
-            rowCount: urls.count,
+            rowCount: count,
             totalPages: totalPages,
           },
         };
@@ -55,13 +56,10 @@ class UrlService {
   getUrlByShortCode = async (shortCode) => {
     try {
       const url = await this.Url.findOne({
-        where: {
-          short_code: shortCode,
-        },
-        attributes: ["id", "url"],
-      });
+        short_code: shortCode,
+      }).select("id url");
 
-      if (url?.id > 0) return url;
+      if (url?.id?.length > 0) return url;
       else throw new Error("Invalid Object Retreived");
     } catch (error) {
       Logger.error(`Error in getUrlByShortCode: 
@@ -73,12 +71,10 @@ class UrlService {
   updateUrl = async (id, urlBody) => {
     try {
       delete urlBody.id;
-      const updatedUrl = await this.Url.update(urlBody, {
-        where: {
-          id: id,
-        },
+      const updatedUrl = await this.Url.findByIdAndUpdate(id, urlBody, {
+        new: true,
       });
-      if (updatedUrl?.length > 0 && updatedUrl[0] === 1) return true;
+      if (updatedUrl) return updatedUrl;
       return false;
     } catch (error) {
       Logger.error(`Error in getUrlById: 
@@ -89,12 +85,13 @@ class UrlService {
 
   addUrl = async (urlBody) => {
     try {
-      const addUrlStatus = await this.Url.create(urlBody);
-      return addUrlStatus;
+      const newUrl = this.Url(urlBody);
+      const savedUrl = await newUrl.save();
+      return savedUrl;
     } catch (error) {
       Logger.error(`Error in addUrl: 
       ${error?.message ? error.message : "Unknown Error"}`);
-      return false;
+      return null;
     }
   };
 }

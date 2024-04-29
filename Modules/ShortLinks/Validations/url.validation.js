@@ -3,6 +3,7 @@ import Joi from "joi";
 const createUrlSchema = Joi.object({
   title: Joi.string().required().max(100),
   url: Joi.string().required().max(600),
+  short_code: Joi.string().optional().max(11),
 });
 
 const updateUrlSchema = Joi.object({
@@ -10,7 +11,7 @@ const updateUrlSchema = Joi.object({
   url: Joi.string().optional().max(600),
   short_code: Joi.string().optional().max(11),
   is_active: Joi.boolean().optional(),
-  id: Joi.number().required().min(0),
+  id: Joi.string().required(),
 });
 
 export const createUrlValidation = (req, res, next) => {

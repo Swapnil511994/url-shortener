@@ -11,7 +11,7 @@ class UserService {
   getUserById = async (userId) => {
     try {
       if (userId <= 0) throw new Error("Invalid userId");
-      const userObj = await this.User.findByPk(userId);
+      const userObj = await this.User.findById(userId);
       if (userObj?.id?.length > 0) return userObj;
       else throw new Error("Invalid Object retreived");
     } catch (error) {
@@ -28,9 +28,7 @@ class UserService {
     try {
       if (emailId?.length <= 0) throw new Error("Invalid input emailId");
       const userObj = await this.User.findOne({
-        where: {
-          email: emailId,
-        },
+        email: emailId,
       });
       if (userObj?.id?.length > 0) return userObj;
       else throw new Error("Invalid Object Returned");
@@ -46,6 +44,16 @@ class UserService {
 
   getAllUsers = async () => {
     //return all users
+    try {
+      return await this.User.find({});
+    } catch (error) {
+      Logger.error(
+        `Error in getAllUsers: ${
+          error.message ? error.message : "Unknown Error"
+        }`
+      );
+      return [];
+    }
   };
 
   updateUser = async (userId, userBody) => {
@@ -55,14 +63,10 @@ class UserService {
       if (userBody?.password)
         userBody.password = await bcrypt.hash(userBody.password, 10);
 
-      const updateUserStatus = await this.User.update(userBody, {
-        where: {
-          id: userId,
-        },
+      const updatedUser = await this.User.findByIdAndUpdate(userId, userBody, {
+        new: true,
       });
-
-      if (updateUserStatus?.length > 0 && updateUserStatus[0] === 1)
-        return true;
+      if (updatedUser) return true;
       else throw new Error("Unable to update user");
     } catch (error) {
       Logger.error(
@@ -78,8 +82,9 @@ class UserService {
     try {
       if (userBody?.password)
         userBody.password = await bcrypt.hash(userBody.password, 10);
-      const addUserStatus = await this.User.create(userBody);
-      return addUserStatus;
+      const newUser = new this.User(userBody);
+      await newUser.save();
+      return newUser;
     } catch (error) {
       Logger.error(
         `Error in addUser: ${error?.message ? error.message : "Unknown Error"}`
