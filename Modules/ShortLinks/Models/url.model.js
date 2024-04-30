@@ -1,3 +1,6 @@
+import URLCounterService from "../Services/url_counter.service.js";
+import { base36Converter } from "../../../Utils/Helpers/converter.helper.js";
+
 export default (mongoose) => {
   const urlSchema = new mongoose.Schema(
     {
@@ -36,5 +39,20 @@ export default (mongoose) => {
     }
   );
 
-  const Url = mongoose.models.Url || mongoose.model("Url", urlSchema);
+  if (!mongoose?.models?.Url) {
+    urlSchema.pre("save", async function (next) {
+      try {
+        const uRLCounterService = new URLCounterService();
+        const newUrl = this;
+        const currentCount = await uRLCounterService.getTotalCount();
+        if (currentCount <= 0) throw new Error("Unable to get url count");
+        newUrl.short_code = base36Converter(currentCount + 1);
+        await uRLCounterService.updateTotalCount();
+        next();
+      } catch (error) {
+        next(error);
+      }
+    });
+    const Url = mongoose.model("Url", urlSchema);
+  }
 };
