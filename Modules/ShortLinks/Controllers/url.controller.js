@@ -1,5 +1,7 @@
 import { Logger } from "../../../Utils/Logger/winston.logger.js";
 import UrlService from "../Services/url.service.js";
+import analyticsEmitter from "../../../Events/events.index.js";
+
 class UrlController {
   constructor() {
     this.urlService = new UrlService();
@@ -72,7 +74,8 @@ class UrlController {
       const url = await this.urlService.getUrlByShortCode(short_code);
       if (url?.id?.length > 0) {
         //redirect to this url
-        res.redirect(url.url);
+        analyticsEmitter.emit("visit", req);
+        return res.redirect(url.url);
       } else throw new Error("Invalid Object Retreived");
     } catch (error) {
       console.log(
