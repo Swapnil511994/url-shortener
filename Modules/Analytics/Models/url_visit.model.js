@@ -10,6 +10,10 @@ export default (mongoose) => {
         type: mongoose.Schema.Types.Mixed,
         required: true,
       },
+      loction_info: {
+        type: mongoose.Schema.Types.Mixed,
+        required: false,
+      },
     },
     {
       timestamps: {
@@ -21,6 +25,6 @@ export default (mongoose) => {
   );
 
   if (!mongoose.models.UrlVisits) {
-    const UrlVisits = mongoose.model("UrlVisits");
+    const UrlVisits = mongoose.model("UrlVisits", urlVisitSchema);
   }
 };

@@ -22,11 +22,11 @@ export default (mongoose) => {
         createdAt: "created_at",
         modifiedAt: "updated_at",
       },
-      collection: "UrlAnalytics",
+      collection: "url_analytics",
     }
   );
 
   if (!mongoose.models.UrlAnalytics) {
-    const UrlAnalytics = mongoose.model("UrlAnalytics");
+    const UrlAnalytics = mongoose.model("UrlAnalytics", analyticsSchema);
   }
 };

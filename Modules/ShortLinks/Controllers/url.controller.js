@@ -74,7 +74,10 @@ class UrlController {
       const url = await this.urlService.getUrlByShortCode(short_code);
       if (url?.id?.length > 0) {
         //redirect to this url
-        analyticsEmitter.emit("visit", req);
+        analyticsEmitter.emit("visit", {
+          request: req,
+          url: url,
+        });
         return res.redirect(url.url);
       } else throw new Error("Invalid Object Retreived");
     } catch (error) {

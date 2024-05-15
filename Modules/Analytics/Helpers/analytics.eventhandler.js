@@ -1,8 +1,18 @@
-//add visit, P3
-export const addVisit = async (req) => {};
+class AnalyticsEventHandler {
+  //add visit, P3
+  addVisit = async (datum) => {
+    // console.log(datum);
+  };
 
-//totaal visits, P1
-export const addTotalVisits = async (req) => {};
+  //total visits, P1
+  addTotalVisits = async (datum) => {
+    // console.log(datum);
+  };
 
-//unique visits, P2
-export const addUniqueVisit = async (req) => {};
+  //unique visits, P2
+  addUniqueVisit = async (datum) => {
+    // console.log(datum);
+  };
+}
+
+export default AnalyticsEventHandler;
